@@ -7,7 +7,7 @@ module Recommendable
       # @param [Object] obj the object to be liked
       # @return true if object was liked successfully
       # @raise [ArgumentError] if the passed object was not declared ratable
-      def like(obj)
+      def like(id)
         obj = Struct.new(:class, :id).new(class: Product, id: id)
 
         run_hook(:before_like, obj)
