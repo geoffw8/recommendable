@@ -22,7 +22,7 @@ module Recommendable
       #
       # @param [Object] obj the object in question
       # @return true if the user has liked obj, false if not
-      def likes?(obj)
+      def likes?(id)
         obj = Struct.new(:class, :id).new(class: Product, id: id)
 
         Recommendable.redis.sismember(Recommendable::Helpers::RedisKeyMapper.liked_set_for(obj.class, id), obj.id)
@@ -32,7 +32,7 @@ module Recommendable
       #
       # @param [Object] obj the object to be unliked
       # @return true if the object was liked successfully, nil if the object wasn't already liked
-      def unlike(obj)
+      def unlike(id)
         obj = Struct.new(:class, :id).new(class: Product, id: id)
         
         run_hook(:before_unlike, obj)
