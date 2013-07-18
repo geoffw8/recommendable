@@ -10,10 +10,8 @@ module Recommendable
       def like(obj)
         obj = Struct.new(:class, :id).new(class: Product, id: id)
 
-        run_hook(:before_like, obj)
         Recommendable.redis.sadd(Recommendable::Helpers::RedisKeyMapper.liked_set_for(obj.class, id), obj.id)
         Recommendable.redis.sadd(Recommendable::Helpers::RedisKeyMapper.liked_by_set_for(obj.class, obj.id), id)
-        run_hook(:after_like, obj)
 
         true
       end
@@ -35,10 +33,8 @@ module Recommendable
       def unlike(obj)
         obj = Struct.new(:class, :id).new(class: Product, id: id)
         
-        run_hook(:before_unlike, obj)
         Recommendable.redis.srem(Recommendable::Helpers::RedisKeyMapper.liked_set_for(obj.class, id), obj.id)
         Recommendable.redis.srem(Recommendable::Helpers::RedisKeyMapper.liked_by_set_for(obj.class, obj.id), id)
-        run_hook(:after_unlike, obj)
 
         true
       end
