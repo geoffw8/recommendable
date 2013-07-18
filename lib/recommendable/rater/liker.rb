@@ -7,8 +7,8 @@ module Recommendable
       # @param [Object] obj the object to be liked
       # @return true if object was liked successfully
       # @raise [ArgumentError] if the passed object was not declared ratable
-      def like(obj)
-        obj = Struct.new(:class, :id).new(class: Product, id: obj)
+      def like(id)
+        obj = Struct.new(:class, :id).new(:class => Product, :id => idj)
 
         run_hook(:before_like, obj)
         Recommendable.redis.sadd(Recommendable::Helpers::RedisKeyMapper.liked_set_for(obj.class, id), obj.id)
@@ -22,8 +22,8 @@ module Recommendable
       #
       # @param [Object] obj the object in question
       # @return true if the user has liked obj, false if not
-      def likes?(obj)
-        obj = Struct.new(:class, :id).new(class: Product, id: obj)
+      def likes?(id)
+        obj = Struct.new(:class, :id).new(class: Product, id: id)
 
         Recommendable.redis.sismember(Recommendable::Helpers::RedisKeyMapper.liked_set_for(obj.class, id), obj.id)
       end
