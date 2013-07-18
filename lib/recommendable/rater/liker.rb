@@ -8,7 +8,7 @@ module Recommendable
       # @return true if object was liked successfully
       # @raise [ArgumentError] if the passed object was not declared ratable
       def like(obj)
-        obj = Struct.new(:class, :id).new(class: Product, id: id)
+        obj = Struct.new(:class, :id).new(class: Product, id: obj)
 
         Recommendable.redis.sadd(Recommendable::Helpers::RedisKeyMapper.liked_set_for(obj.class, id), obj.id)
         Recommendable.redis.sadd(Recommendable::Helpers::RedisKeyMapper.liked_by_set_for(obj.class, obj.id), id)
@@ -21,7 +21,7 @@ module Recommendable
       # @param [Object] obj the object in question
       # @return true if the user has liked obj, false if not
       def likes?(obj)
-        obj = Struct.new(:class, :id).new(class: Product, id: id)
+        obj = Struct.new(:class, :id).new(class: Product, id: obj)
 
         Recommendable.redis.sismember(Recommendable::Helpers::RedisKeyMapper.liked_set_for(obj.class, id), obj.id)
       end
@@ -31,8 +31,8 @@ module Recommendable
       # @param [Object] obj the object to be unliked
       # @return true if the object was liked successfully, nil if the object wasn't already liked
       def unlike(obj)
-        obj = Struct.new(:class, :id).new(class: Product, id: id)
-        
+        obj = Struct.new(:class, :id).new(class: Product, id: obj)
+
         Recommendable.redis.srem(Recommendable::Helpers::RedisKeyMapper.liked_set_for(obj.class, id), obj.id)
         Recommendable.redis.srem(Recommendable::Helpers::RedisKeyMapper.liked_by_set_for(obj.class, obj.id), id)
 
