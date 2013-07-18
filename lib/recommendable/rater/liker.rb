@@ -10,8 +10,10 @@ module Recommendable
       def like(obj)
         obj = Struct.new(:class, :id).new(class: Product, id: obj)
 
+        run_hook(:before_like, obj)
         Recommendable.redis.sadd(Recommendable::Helpers::RedisKeyMapper.liked_set_for(obj.class, id), obj.id)
         Recommendable.redis.sadd(Recommendable::Helpers::RedisKeyMapper.liked_by_set_for(obj.class, obj.id), id)
+        run_hook(:after_like, obj)
 
         true
       end
