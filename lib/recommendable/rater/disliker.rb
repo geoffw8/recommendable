@@ -8,8 +8,10 @@ module Recommendable
       # @return true if object was disliked successfully
       # @raise [ArgumentError] if the passed object was not declared ratable
       def dislike(obj)
-        raise(ArgumentError, 'Object has not been declared ratable.') unless obj.respond_to?(:recommendable?) && obj.recommendable?
-        return if dislikes?(obj)
+        obj = Struct.new(:class, :id)
+        obj = obj.new
+        obj.id = id
+        obj.class = Product
 
         run_hook(:before_dislike, obj)
         Recommendable.redis.sadd(Recommendable::Helpers::RedisKeyMapper.disliked_set_for(obj.class, id), obj.id)
@@ -24,6 +26,11 @@ module Recommendable
       # @param [Object] obj the object in question
       # @return true if the user has disliked obj, false if not
       def dislikes?(obj)
+        obj = Struct.new(:class, :id)
+        obj = obj.new
+        obj.id = id
+        obj.class = Product
+        
         Recommendable.redis.sismember(Recommendable::Helpers::RedisKeyMapper.disliked_set_for(obj.class, id), obj.id)
       end
 
